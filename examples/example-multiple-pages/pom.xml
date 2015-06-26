@@ -1,0 +1,35 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>geneclipsetoc</groupId>
+  <artifactId>example-multiple-pages</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>geneclipsetoc</groupId>
+        <artifactId>geneclipsetoc-maven-plugin</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>geneclipsetoc</goal>
+            </goals>
+            <configuration>
+              <helpPrefix>html/</helpPrefix>
+              <sourceFolder>docs/</sourceFolder>
+              <pages>
+                <page>intro.html</page>
+                <page>page1.html</page>
+                <page>page2.html</page>
+              </pages>
+              <outputFile>${project.build.directory}/lorem-toc.xml</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

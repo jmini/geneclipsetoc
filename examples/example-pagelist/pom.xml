@@ -1,0 +1,29 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>geneclipsetoc</groupId>
+  <artifactId>example-pagelist</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+ 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>geneclipsetoc</groupId>
+        <artifactId>geneclipsetoc-maven-plugin</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>geneclipsetoc</goal>
+            </goals>
+            <configuration>
+              <sourceFolder>${basedir}</sourceFolder>
+              <pagesListFile>help-pages.txt</pagesListFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
