@@ -8,9 +8,7 @@
  * Contributors:
  *     Jeremie Bresson - initial API and implementation
  ******************************************************************************/
-package geneclipsetoc.maven;
-
-import geneclipsetoc.internal.GenerateEclipseTocUtility;
+package com.bsiag.geneclipsetoc.maven;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import com.bsiag.geneclipsetoc.internal.GenerateEclipseTocUtility;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

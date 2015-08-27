@@ -8,7 +8,7 @@
  * Contributors:
  *     Jeremie Bresson - initial API and implementation
  ******************************************************************************/
-package geneclipsetoc.internal;
+package com.bsiag.geneclipsetoc.internal;
 
 import org.eclipse.mylyn.wikitext.core.parser.outline.OutlineItem;
 

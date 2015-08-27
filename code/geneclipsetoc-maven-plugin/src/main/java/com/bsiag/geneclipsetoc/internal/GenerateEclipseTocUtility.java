@@ -8,7 +8,7 @@
  * Contributors:
  *     Jeremie Bresson - initial API and implementation
  ******************************************************************************/
-package geneclipsetoc.internal;
+package com.bsiag.geneclipsetoc.internal;
 
 import java.io.File;
 import java.io.IOException;
