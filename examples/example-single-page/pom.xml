@@ -4,6 +4,7 @@
   <groupId>com.bsiag.geneclipsetoc</groupId>
   <artifactId>example-single-page</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
  
   <build>
     <plugins>
