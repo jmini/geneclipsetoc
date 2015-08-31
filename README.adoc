@@ -1,5 +1,5 @@
 :eclipse_help_center: https://wiki.eclipse.org/Platform/InfoCenter
-:blog: https://www.bsi-software.com/scout/toc-xml-from-existing-html/
+:blog: https://www.bsi-software.com/en/scout-blog/article/toc-xml-from-existing-html/
 :wikitext: https://wiki.eclipse.org/Mylyn/WikiText
 :issues: https://github.com/jmini/geneclipsetoc/issues
 :license: http://www.eclipse.org/legal/epl-v10.html
