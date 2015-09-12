@@ -27,33 +27,39 @@ import com.google.common.io.Files;
 @Mojo(name = "geneclipsetoc")
 public class GenerateEclipseTocMojo extends AbstractMojo {
 
+  private static final String SOURCE_FOLDER = "sourceFolder";
+  private static final String PAGES = "pages";
+  private static final String PAGES_LIST_FILE = "pagesListFile";
+  private static final String HELP_PREFIX = "helpPrefix";
+  private static final String OUTPUT_FILE = "outputFile";
+
   /**
    * Source folder.
    *
    * @parameter expression="${basedir}/src/main/docs"
    * @required
    */
-  @Parameter(property = "sourceFolder", defaultValue = "${basedir}/src/main/docs")
+  @Parameter(property = SOURCE_FOLDER, defaultValue = "${basedir}/src/main/docs")
   protected File sourceFolder;
 
   /**
    * Ordered list of HTLM pages.
    * If set, {@link #pagesListFile} can not be set.
    */
-  @Parameter(property = "pages")
+  @Parameter(property = PAGES)
   protected List<String> pages;
 
   /**
    * External file containing the ordered list of pages.
    * If set, {@link #pages} can not be set.
    */
-  @Parameter(property = "pagesListFile")
+  @Parameter(property = PAGES_LIST_FILE)
   protected File pagesListFile;
 
   /**
    * Sub-path of the HTML pages in the final help plugin: It is the related position of the HTML pages to the toc file.
    */
-  @Parameter(property = "helpPrefix")
+  @Parameter(property = HELP_PREFIX)
   protected String helpPrefix;
 
   /**
@@ -62,23 +68,23 @@ public class GenerateEclipseTocMojo extends AbstractMojo {
    * @parameter expression="${project.build.directory}/generated-toc-file/toc.xml"
    * @required
    */
-  @Parameter(property = "outputFile", defaultValue = "${project.build.directory}/generated-toc-file/toc.xml")
+  @Parameter(property = OUTPUT_FILE, defaultValue = "${project.build.directory}/generated-toc-file/toc.xml")
   protected File outputFile;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
     List<String> pList;
     if (pages.isEmpty() && pagesListFile == null) {
-      throw new MojoFailureException("No pages list defined, use the pages or pagesListFile configuration");
+      throw new MojoFailureException("No pages list defined, add <" + PAGES + "> or <" + PAGES_LIST_FILE + "> in your configuration");
     }
     else if (pagesListFile != null) {
       if (!pages.isEmpty()) {
-        throw new MojoFailureException("The pages list is defined using a file (pagesListFile), the pages configuration should not be used");
+        throw new MojoFailureException("The pages list is defined using a file (<" + PAGES_LIST_FILE + "> is set),  <" + PAGES + "> configuration can not be used");
       }
       try {
         pList = Files.readLines(pagesListFile, Charsets.UTF_8);
       }
       catch (IOException e) {
-        throw new MojoFailureException("Error while reading the pagesListFile", e);
+        throw new MojoFailureException("Error while reading the file defined in <" + PAGES_LIST_FILE + ">", e);
       }
     }
     else {
@@ -89,7 +95,7 @@ public class GenerateEclipseTocMojo extends AbstractMojo {
       GenerateEclipseTocUtility.generate(sourceFolder, pList, helpPrefix, outputFile);
     }
     catch (IOException e) {
-      throw new MojoExecutionException("Error while generating the Toc File", e);
+      throw new MojoExecutionException("Error while generating the toc file", e);
     }
     getLog().info("Generated toc file: " + outputFile);
   }
