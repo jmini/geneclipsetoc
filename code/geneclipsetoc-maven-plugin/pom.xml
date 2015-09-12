@@ -5,45 +5,55 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <properties>
+    <guava.version>15.0</guava.version>
+    <hamcrest.core.version>1.1</hamcrest.core.version>
+    <junit.version>4.8</junit.version>
+    <jsoup.version>1.7.2</jsoup.version>
+    <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+    <maven.plugin.annotations.version>3.4</maven.plugin.annotations.version>
+    <maven.plugin.api.version>3.0</maven.plugin.api.version>
+    <maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
+    <mylyn.wikitext.core.version>2.5.0-SNAPSHOT</mylyn.wikitext.core.version>
+    <project.java.version>1.7</project.java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.0</version>
+      <version>${maven.plugin.api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.mylyn.docs</groupId>
       <artifactId>org.eclipse.mylyn.wikitext.core</artifactId>
-      <version>2.5.0-SNAPSHOT</version>
+      <version>${mylyn.wikitext.core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>15.0</version>
+      <version>${guava.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.7.2</version>
+      <version>${jsoup.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.4</version>
+      <version>${maven.plugin.annotations.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
-      <version>1.1</version>
+      <version>${hamcrest.core.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -51,8 +61,17 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <source>${project.java.version}</source>
+          <target>${project.java.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.4</version>
+        <version>${maven.plugin.plugin.version}</version>
       </plugin>
     </plugins>
   </build>
