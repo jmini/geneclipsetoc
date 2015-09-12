@@ -203,19 +203,6 @@ public class GenerateEclipseTocUtility {
   }
 
   /**
-   * Read the file and apply {@link #findFirstHeader(Document)}
-   *
-   * @param file
-   * @return title or null if not found
-   * @throws IOException
-   */
-  private static String readAndFindFirstHeader(File file) throws IOException {
-    String html = Files.toString(file, Charsets.ISO_8859_1);
-    Document doc = Jsoup.parse(html);
-    return findFirstHeader(doc);
-  }
-
-  /**
    * Find the first header (h1, h2, h3, h4, h5 or h6) and returns the text
    * content .
    *
