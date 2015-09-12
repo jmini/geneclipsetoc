@@ -4,14 +4,14 @@
 :issues: https://github.com/jmini/geneclipsetoc/issues
 :license: http://www.eclipse.org/legal/epl-v10.html
 
-= geneclipsetoc
+= geneclipsetoc-maven-plugin
 
-Maven plugin to generate an eclipse help toc.xml file from existing html files.
+Maven plugin to generate an eclipse help `toc.xml` file from existing html files.
 
 == Description
 
 This is a maven plugin that takes as input an ordered list of HTML pages and that generate a table of content file (`toc.xml` file) for these pages.
-With this xml file, it is possible to publish the HTML pages as Guide in an link:{eclipse_help_center}[Eclipse Help Center].
+With this xml file, it is possible to publish the HTML pages as guide in an link:{eclipse_help_center}[Eclipse Help Center].
 
 The approach was originally described here: link:{blog}[Generating Eclipse Help from existing HTML Documentation]
 
@@ -24,13 +24,18 @@ Check out the link:examples/[examples].
 
 == Code
 
-The source code of the plugin is available in the link:code/[code] folder.
+As for any maven plugin, the source code of the plugin is available in the link:src/[src] folder.
+
+With Eclipse IDE, here is how you can import this project:
+
+* Clone or add this repository using the "Git Repositories" view.
+* Start the "Import Projects..." wizard on the "Working Directory" folder and pick the option "Import as general project".
+* Back in the Package Explorer view, select "Configure" > "Convert to Maven Project" on the project.
 
 === Build
 
-Run maven install on the corresponding pom file:
+Run maven install on the root pom file:
 
-  cd code/geneclipsetoc-maven-plugin/
   mvn install
 
 == Get in touch
