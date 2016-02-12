@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.bsiag.geneclipsetoc</groupId>
   <artifactId>geneclipsetoc-maven-plugin</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>maven-plugin</packaging>
   <properties>
     <guava.version>15.0</guava.version>
@@ -86,7 +86,7 @@
     <connection>scm:git:https://github.com/jmini/geneclipsetoc.git</connection>
     <developerConnection>scm:git:git@github.com:jmini/geneclipsetoc.git</developerConnection>
     <url>https://github.com/jmini/geneclipsetoc</url>
-    <tag>HEAD</tag>
+    <tag>v1.0.2</tag>
   </scm>
   <distributionManagement>
     <repository>
