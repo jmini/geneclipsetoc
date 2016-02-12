@@ -30,8 +30,10 @@ public class GenerateEclipseTocMojo extends AbstractMojo {
   private static final String SOURCE_FOLDER = "sourceFolder";
   private static final String PAGES = "pages";
   private static final String PAGES_LIST_FILE = "pagesListFile";
+  private static final String HELP_CONTEXTS = "helpContexts";
   private static final String HELP_PREFIX = "helpPrefix";
-  private static final String OUTPUT_FILE = "outputFile";
+  private static final String OUTPUT_TOC_FILE = "outputTocFile";
+  private static final String OUTPUT_CONTEXTS_FILE = "outputContextsFile";
 
   /**
    * Source folder.
@@ -57,6 +59,12 @@ public class GenerateEclipseTocMojo extends AbstractMojo {
   protected File pagesListFile;
 
   /**
+   * List of the contexts that needs to be generated.
+   */
+  @Parameter(property = HELP_CONTEXTS)
+  protected List<HelpContext> helpContexts;
+
+  /**
    * Sub-path of the HTML pages in the final help plugin: It is the related position of the HTML pages to the toc file.
    */
   @Parameter(property = HELP_PREFIX)
@@ -68,9 +76,19 @@ public class GenerateEclipseTocMojo extends AbstractMojo {
    * @parameter expression="${project.build.directory}/generated-toc-file/toc.xml"
    * @required
    */
-  @Parameter(property = OUTPUT_FILE, defaultValue = "${project.build.directory}/generated-toc-file/toc.xml")
-  protected File outputFile;
+  @Parameter(property = OUTPUT_TOC_FILE, defaultValue = "${project.build.directory}/generated-toc-file/toc.xml")
+  protected File outputTocFile;
 
+  /**
+   * Output contexts file.
+   *
+   * @parameter expression="${project.build.directory}/generated-contexts-file/contexts.xml"
+   * @required
+   */
+  @Parameter(property = OUTPUT_CONTEXTS_FILE, required = true, defaultValue = "${project.build.directory}/generated-contexts-file/contexts.xml")
+  private File outputContextsFile;
+
+  @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     List<String> pList;
     if (pages.isEmpty() && pagesListFile == null) {
@@ -92,12 +110,12 @@ public class GenerateEclipseTocMojo extends AbstractMojo {
     }
 
     try {
-      GenerateEclipseTocUtility.generate(sourceFolder, pList, helpPrefix, outputFile);
+      GenerateEclipseTocUtility.generate(sourceFolder, pList, helpPrefix, outputTocFile, outputContextsFile, helpContexts);
     }
     catch (IOException e) {
       throw new MojoExecutionException("Error while generating the toc file", e);
     }
-    getLog().info("Generated toc file: " + outputFile);
+    getLog().info("Generated toc file: " + outputTocFile);
   }
 
 }

@@ -24,6 +24,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.bsiag.geneclipsetoc.internal.contexts.Context;
+import com.bsiag.geneclipsetoc.internal.contexts.ContextUtility;
+import com.bsiag.geneclipsetoc.internal.contexts.Topic;
+import com.bsiag.geneclipsetoc.maven.HelpContext;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -36,7 +40,7 @@ public class GenerateEclipseTocUtility {
   private static final int ROOT_LEVEL = 0;
   private static final String ROOT_ID = "id";
 
-  public static void generate(File rootInFolder, List<String> pages, String helpPrefix, File outTocFile) throws IOException {
+  public static void generate(File rootInFolder, List<String> pages, String helpPrefix, File outTocFile, File outContextsFile, List<HelpContext> inContexts) throws IOException {
     if (!rootInFolder.exists() || !rootInFolder.isDirectory()) {
       throw new IllegalStateException("Folder rootInFolder '" + rootInFolder.getAbsolutePath() + "' not found.");
     }
@@ -46,15 +50,27 @@ public class GenerateEclipseTocUtility {
     if (outTocFile == null) {
       throw new IllegalStateException("File outTocFile is not set.");
     }
+    if (inContexts != null && inContexts.size() > 0 && outContextsFile == null) {
+      throw new IllegalStateException("File outContextsFile is not set (but there are '" + inContexts.size() + "' HelpContexts)");
+    }
 
+    //Prepare the rootInFolder list (this will check that the files exist)
     List<File> inFiles = new ArrayList<File>();
     for (String p : pages) {
       if (p != null && p.length() > 0) {
-        File f = new File(rootInFolder, p);
-        if (!f.exists() || !f.isFile()) {
-          throw new IllegalStateException("File '" + f.getAbsolutePath() + "' not found.");
+        inFiles.add(computeFile(rootInFolder, p));
+      }
+    }
+
+    //Prepare the topicFileMap (this will check that the files exist)
+    Map<File, String> topicFileMap = new HashMap<>();
+    if (inContexts != null) {
+      for (HelpContext hc : inContexts) {
+        if (hc.getTopicPages() != null) {
+          for (String p : hc.getTopicPages()) {
+            topicFileMap.put(computeFile(rootInFolder, p), null);
+          }
         }
-        inFiles.add(f);
       }
     }
 
@@ -63,10 +79,23 @@ public class GenerateEclipseTocUtility {
       File inFile = inFiles.get(i);
 
       String html = Files.toString(inFile, Charsets.UTF_8);
-      String filePath = calculateFilePath(rootInFolder, inFile, helpPrefix);
+      String filePath = calculateFilePath(rootInFolder, inFile);
       Document doc = Jsoup.parse(html);
 
       computeOutlineNodes(nodeMap, doc, filePath);
+
+      if (topicFileMap.containsKey(inFile)) {
+        topicFileMap.put(inFile, findFirstHeader(doc));
+      }
+    }
+
+    //Loop over the topicFileMap and verify that all values are set.
+    for (File inFile : topicFileMap.keySet()) {
+      if (topicFileMap.get(inFile) == null) {
+        String html = Files.toString(inFile, Charsets.UTF_8);
+        Document doc = Jsoup.parse(html);
+        topicFileMap.put(inFile, findFirstHeader(doc));
+      }
     }
 
     OutlineItemEx root = nodeMap.get(ROOT_LEVEL);
@@ -74,6 +103,7 @@ public class GenerateEclipseTocUtility {
       throw new IllegalStateException("No header found in the html files");
     }
 
+    //Compute Toc File and write it
     MarkupToEclipseToc eclipseToc = new MarkupToEclipseToc() {
       @Override
       protected String computeFile(OutlineItem item) {
@@ -89,12 +119,79 @@ public class GenerateEclipseTocUtility {
     String tocContent = eclipseToc.createToc(root);
     Files.createParentDirs(outTocFile);
     Files.write(tocContent, outTocFile, Charsets.UTF_8);
+
+    //Compute Contexts File and write it
+    if (inContexts != null && inContexts.size() > 0) {
+      List<Context> outContexts = computeContexts(rootInFolder, helpPrefix, inContexts, topicFileMap);
+      String contextsContent = ContextUtility.toXml(outContexts);
+      Files.createParentDirs(outContextsFile);
+      Files.write(contextsContent, outContextsFile, Charsets.UTF_8);
+    }
   }
 
-  private static String calculateFilePath(File rootFolder, File file, String subPath) {
-    return file.getAbsolutePath()
-        .substring(rootFolder.getAbsolutePath().length() + 1)
-        .replaceAll("\\\\", "/");
+  static List<Context> computeContexts(File rootInFolder, String helpPrefix, List<HelpContext> inContexts, Map<File, String> topicFileMap) {
+    List<Context> outContexts = new ArrayList<>();
+    if (inContexts != null) {
+      for (HelpContext hc : inContexts) {
+        Context context = new Context();
+
+        List<Topic> topics = new ArrayList<>();
+        if (hc.getTopicPages() != null) {
+          for (String p : hc.getTopicPages()) {
+            Topic topic = new Topic();
+
+            File file = computeFile(rootInFolder, p);
+            String filePath = calculateFilePath(rootInFolder, file, helpPrefix);
+
+            topic.setHref(filePath);
+            topic.setLabel(topicFileMap.get(file));
+            topics.add(topic);
+          }
+        }
+        context.setTopics(topics);
+        if (hc.getTitle() != null && hc.getTitle().length() > 0) {
+          context.setTitle(hc.getTitle());
+        }
+        else if (topics.size() > 0) {
+          context.setTitle(topics.get(0).getLabel());
+        }
+        context.setId(hc.getId());
+        context.setDescription(hc.getDescription());
+        outContexts.add(context);
+      }
+    }
+    return outContexts;
+  }
+
+  /**
+   * Compute the file for a page name.
+   *
+   * @param rootInFolder
+   * @param page
+   * @return file
+   */
+  private static File computeFile(File rootInFolder, String page) {
+    File file = new File(rootInFolder, page);
+    if (!file.exists() || !file.isFile()) {
+      throw new IllegalStateException("File '" + file.getAbsolutePath() + "' not found.");
+    }
+    return file;
+  }
+
+  private static String calculateFilePath(File rootFolder, File file) {
+    return file.getAbsolutePath().substring(rootFolder.getAbsolutePath().length() + 1).replaceAll("\\\\", "/");
+  }
+
+  private static String calculateFilePath(File rootFolder, File file, String helpPrefix) {
+    StringBuilder sb = new StringBuilder();
+    if (helpPrefix != null && helpPrefix.length() > 0) {
+      sb.append(helpPrefix);
+      if (!helpPrefix.endsWith("/")) {
+        sb.append("/");
+      }
+    }
+    sb.append(calculateFilePath(rootFolder, file));
+    return sb.toString();
   }
 
   static void computeOutlineNodes(Map<Integer, OutlineItemEx> nodeMap, Document doc, String filePath) {

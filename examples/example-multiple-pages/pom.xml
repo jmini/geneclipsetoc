@@ -24,7 +24,7 @@
       <plugin>
         <groupId>com.bsiag.geneclipsetoc</groupId>
         <artifactId>geneclipsetoc-maven-plugin</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2-SNAPSHOT</version>
         <executions>
           <execution>
             <phase>generate-resources</phase>
@@ -39,7 +39,24 @@
                 <page>page1.html</page>
                 <page>page2.html</page>
               </pages>
-              <outputFile>${project.build.directory}/lorem-toc.xml</outputFile>
+              <outputTocFile>${project.build.directory}/lorem-toc.xml</outputTocFile>
+              <outputContextsFile>${project.build.directory}/lorem-contexts.xml</outputContextsFile>
+              <helpContexts>
+                <helpContext>
+                  <id>introduction_page_context</id>
+                  <title>Some Introduction</title>
+                  <topicPages>
+                    <topicPage>intro.html</topicPage>
+                  </topicPages>
+                </helpContext>
+                <helpContext>
+                  <description>Pages description lorem ipsum.</description>
+                  <topicPages>
+                    <topicPage>page1.html</topicPage>
+                    <topicPage>page2.html</topicPage>
+                  </topicPages>
+                </helpContext>
+              </helpContexts>
             </configuration>
           </execution>
         </executions>

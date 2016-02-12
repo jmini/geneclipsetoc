@@ -13,7 +13,11 @@ package com.bsiag.geneclipsetoc.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.mylyn.wikitext.core.parser.outline.OutlineItem;
@@ -22,6 +26,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.junit.Test;
+
+import com.bsiag.geneclipsetoc.internal.contexts.Context;
+import com.bsiag.geneclipsetoc.maven.HelpContext;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 public class GenerateEclipseTocUtilityTest {
 
@@ -193,5 +202,62 @@ public class GenerateEclipseTocUtilityTest {
     c2.attr("id", "a-id");
     e.appendChild(c2);
     assertEquals("test-id", GenerateEclipseTocUtility.findId(e));
+  }
+
+  @Test
+  public void testComputeContexts() throws Exception {
+    File rootInFolder = Files.createTempDir();
+    File file1 = new File(rootInFolder, "page1.html");
+    Files.write("tmp1", file1, Charsets.UTF_8);
+    File file2 = new File(rootInFolder, "page2.html");
+    Files.write("tmp2", file2, Charsets.UTF_8);
+    String helpPrefix = "xxx";
+
+    HelpContext helpContext1 = new HelpContext() {
+      @Override
+      public String getId() {
+        return "first_page_context";
+      }
+
+      @Override
+      public String getTitle() {
+        return "Page Context 1";
+      }
+
+      @Override
+      public List<String> getTopicPages() {
+        return Collections.singletonList("page1.html");
+      }
+    };
+    HelpContext helpContext2 = new HelpContext() {
+      @Override
+      public String getId() {
+        return "second_page_context";
+      }
+
+      @Override
+      public List<String> getTopicPages() {
+        return Arrays.asList("page1.html", "page2.html");
+      }
+    };
+    List<HelpContext> inContexts = Arrays.asList(helpContext1, helpContext2);
+    Map<File, String> topicFileMap = new HashMap<>();
+    topicFileMap.put(file1, "My first chapter");
+    topicFileMap.put(file2, "My second chapter");
+
+    List<Context> outContexts = GenerateEclipseTocUtility.computeContexts(rootInFolder, helpPrefix, inContexts, topicFileMap);
+    assertEquals("outContexts size", 2, outContexts.size());
+    assertEquals("first outContext id", "first_page_context", outContexts.get(0).getId());
+    assertEquals("first outContext title", "Page Context 1", outContexts.get(0).getTitle());
+    assertEquals("first outContext topics size", 1, outContexts.get(0).getTopics().size());
+    assertEquals("first outContext first topic href", "xxx/page1.html", outContexts.get(0).getTopics().get(0).getHref());
+    assertEquals("first outContext first topic label", "My first chapter", outContexts.get(0).getTopics().get(0).getLabel());
+    assertEquals("second outContext id", "second_page_context", outContexts.get(1).getId());
+    assertEquals("second outContext title", "My first chapter", outContexts.get(1).getTitle());
+    assertEquals("second outContext topics size", 2, outContexts.get(1).getTopics().size());
+    assertEquals("second outContext first topic href", "xxx/page1.html", outContexts.get(1).getTopics().get(0).getHref());
+    assertEquals("second outContext first topic label", "My first chapter", outContexts.get(1).getTopics().get(0).getLabel());
+    assertEquals("second outContext second topic href", "xxx/page2.html", outContexts.get(1).getTopics().get(1).getHref());
+    assertEquals("second outContext second topic label", "My second chapter", outContexts.get(1).getTopics().get(1).getLabel());
   }
 }
