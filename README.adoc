@@ -1,6 +1,7 @@
 :eclipse_help_center: https://wiki.eclipse.org/Platform/InfoCenter
-:blog: https://www.bsi-software.com/en/scout-blog/article/toc-xml-from-existing-html/
+:blog: https://www.bsi-software.com/en/scout-blog/article/generating-eclipse-help-from-existing-html-documentation.html
 :wikitext: https://wiki.eclipse.org/Mylyn/WikiText
+:bug478466: https://bugs.eclipse.org/bugs/show_bug.cgi?id=478466
 :issues: https://github.com/jmini/geneclipsetoc/issues
 :license: http://www.eclipse.org/legal/epl-v10.html
 
@@ -15,8 +16,10 @@ With this xml file, it is possible to publish the HTML pages as guide in an link
 
 The approach was originally described here: link:{blog}[Generating Eclipse Help from existing HTML Documentation]
 
-It is based on the link:{wikitext}[mylyn-wikitext] framework and very similar to the `wikitext-to-eclipse-help` task provided by the framework.
+It is based on the link:{wikitext}[mylyn-wikitext] project and very similar to the `wikitext-to-eclipse-help` task provided by the project.
 The only difference here is that there is no markup to HTML conversion during the process.
+
+If you think that `geneclipsetoc` should be contributed to the mylyn-wikitext project, please give your opinion on link:{bug478466}[Bug 478466].
 
 == Usage
 
